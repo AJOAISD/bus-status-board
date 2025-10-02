@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <!-- Navigation Bar -->
+  <nav class="bg-gray-300 p-4 mb-6 rounded-b shadow">
+    <div class="container mx-auto flex gap-6">
+      <a href="/" class="font-semibold hover:underline">Bus Status Board</a>
+      <a href="/admin" class="font-semibold hover:underline">Admin Panel</a>
+      <a href="/runs" class="font-semibold hover:underline">Outside Bus Runs</a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Admin Panel</h1>
+
+    <!-- Tabs -->
+    <div class="mb-6">
+      <button class="tab-button bg-blue-600 text-white px-4 py-2 rounded-l active" data-tab="buses">Manage Buses</button>
+      <button class="tab-button bg-gray-300 text-gray-800 px-4 py-2 rounded-r" data-tab="runs">Manage Outside Runs</button>
+    </div>
+
+    <!-- Tab Content: Buses -->
+    <div id="buses" class="tab-content block">
+      <h2 class="text-xl font-semibold mb-2">Manage Buses</h2>
+
+      <!-- Add Bus Form -->
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <form method="POST" class="flex gap-4 items-center">
+          <input type="hidden" name="action" value="add">
+          <input type="text" name="bus_number" placeholder="Bus Number" required class="border rounded p-2">
+          <input type="text" name="driver" placeholder="Driver" required class="border rounded p-2">
+          <select name="status" class="border rounded p-2">
+            <option>On Route</option>
+            <option>Delayed</option>
+            <option>In Garage</option>
+          </select>
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Bus</button>
+        </form>
+      </div>
+
+      <!-- Existing Buses Table -->
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="border p-2">Bus</th>
+            <th class="border p-2">Driver</th>
+            <th class="border p-2">Current Status</th>
+            <th class="border p-2">Update Status</th>
+            <th class="border p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for bus in buses %}
+          <tr class="bg-white">
+            <form method="POST">
+              <td class="border p-2">Bus {{ bus[1] }}</td>
+              <td class="border p-2">
+                <input type="text" name="driver" value="{{ bus[2] }}" class="border rounded p-1 w-full">
+              </td>
+              <td class="border p-2 text-center">
+                {% if bus[3] == "On Route" %}
+                  <span class="px-3 py-1 rounded-lg bg-green-600 text-white">{{ bus[3] }}</span>
+                {% elif bus[3] == "Delayed" %}
+                  <span class="px-3 py-1 rounded-lg bg-red-600 text-white">{{ bus[3] }}</span>
+                {% elif bus[3] == "In Garage" %}
+                  <span class="px-3 py-1 rounded-lg bg-gray-500 text-white">{{ bus[3] }}</span>
+                {% else %}
+                  <span class="px-3 py-1 rounded-lg bg-blue-600 text-white">{{ bus[3] }}</span>
+                {% endif %}
+              </td>
+              <td class="border p-2">
+                <select name="status" class="border rounded p-1 w-full">
+                  <option {% if bus[3] == "On Route" %}selected{% endif %}>On Route</option>
+                  <option {% if bus[3] == "Delayed" %}selected{% endif %}>Delayed</option>
+                  <option {% if bus[3] == "In Garage" %}selected{% endif %}>In Garage</option>
+                </select>
+              </td>
+              <td class="border p-2 flex gap-2 justify-center">
+                <input type="hidden" name="bus_id" value="{{ bus[0] }}">
+                <input type="hidden" name="action" value="update">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700">Save</button>
+            </form>
+            <form method="POST" onsubmit="return confirm('Delete this bus?');">
+              <input type="hidden" name="bus_id" value="{{ bus[0] }}">
+              <input type="hidden" name="action" value="delete">
+              <button type="submit" class="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700">Delete</button>
+            </form>
+              </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Tab Content: Runs -->
+    <div id="runs" class="tab-content hidden">
+      <h2 class="text-xl font-semibold mb-2">Manage Outside Runs</h2>
+
+      <!-- Add Run Form -->
+      <div class="bg-white p-4 rounded shadow mb-6">
+        <form method="POST" class="grid grid-cols-6 gap-4">
+          <input type="hidden" name="action" value="add_run">
+          <input type="date" name="run_date" required class="border rounded p-2 col-span-1">
+          <input type="time" name="run_time" required class="border rounded p-2 col-span-1">
+          <input type="text" name="group_name" placeholder="Group" required class="border rounded p-2 col-span-1">
+          <input type="text" name="destination" placeholder="Destination" required class="border rounded p-2 col-span-1">
+          <input type="text" name="driver" placeholder="Driver" required class="border rounded p-2 col-span-1">
+          <input type="text" name="bus_number" placeholder="Bus #" required class="border rounded p-2 col-span-1">
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 col-span-6">Add Run</button>
+        </form>
+      </div>
+
+      <!-- Runs Table -->
+      <table class="w-full border-collapse">
+        <thead>
+          <tr class="bg-gray-300">
+            <th class="border p-2">Date</th>
+            <th class="border p-2">Time</th>
+            <th class="border p-2">Group</th>
+            <th class="border p-2">Destination</th>
+            <th class="border p-2">Driver</th>
+            <th class="border p-2">Bus</th>
+            <th class="border p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for run in runs %}
+          <tr class="bg-white">
+            <td class="border p-2">{{ run[1] }}</td>
+            <td class="border p-2">{{ run[2] }}</td>
+            <td class="border p-2">{{ run[3] }}</td>
+            <td class="border p-2">{{ run[4] }}</td>
+            <td class="border p-2">{{ run[5] }}</td>
+            <td class="border p-2">{{ run[6] }}</td>
+            <td class="border p-2 text-center">
+              <form method="POST" onsubmit="return confirm('Delete this run?');">
+                <input type="hidden" name="run_id" value="{{ run[0] }}">
+                <input type="hidden" name="action" value="delete_run">
+                <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- JS for tabs -->
+  <script>
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabContents = document.querySelectorAll(".tab-content");
+
+    tabButtons.forEach(button => {
+      button.addEventListener("click", () => {
+        // Hide all contents
+        tabContents.forEach(c => c.classList.add("hidden"));
+        tabContents.forEach(c => c.classList.remove("block"));
+
+        // Remove active class from all buttons
+        tabButtons.forEach(b => b.classList.remove("bg-blue-600", "text-white"));
+        tabButtons.forEach(b => b.classList.add("bg-gray-300", "text-gray-800"));
+
+        // Show selected tab
+        document.getElementById(button.dataset.tab).classList.remove("hidden");
+        document.getElementById(button.dataset.tab).classList.add("block");
+
+        // Activate clicked tab
+        button.classList.add("bg-blue-600", "text-white");
+        button.classList.remove("bg-gray-300", "text-gray-800");
+      });
+    });
+  </script>
+</body>
+</html>

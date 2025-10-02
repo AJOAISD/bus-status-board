@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Outside Bus Runs</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+  <!-- Navigation Bar -->
+  <nav class="bg-gray-300 p-4 mb-6 rounded-b shadow">
+    <div class="container mx-auto flex gap-6">
+      <a href="/" class="font-semibold hover:underline">Bus Status Board</a>
+      <a href="/runs" class="font-semibold hover:underline">Outside Bus Runs</a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6">Upcoming Outside Bus Runs</h1>
+
+    <!-- Runs Table -->
+    <table class="w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-300">
+          <th class="border p-2">Date</th>
+          <th class="border p-2">Time</th>
+          <th class="border p-2">Group</th>
+          <th class="border p-2">Destination</th>
+          <th class="border p-2">Driver</th>
+          <th class="border p-2">Bus</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for run in runs %}
+        <tr class="bg-white">
+          <td class="border p-2">{{ run[1] }}</td>
+          <td class="border p-2">{{ run[2] }}</td>
+          <td class="border p-2">{{ run[3] }}</td>
+          <td class="border p-2">{{ run[4] }}</td>
+          <td class="border p-2">{{ run[5] }}</td>
+          <td class="border p-2">{{ run[6] }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
