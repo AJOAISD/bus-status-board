@@ -6,7 +6,7 @@
 # -----------------------------
 APP_NAME="busboard"
 APP_DIR="/home/ubuntu/$APP_NAME"   # directory where the app will live
-GITHUB_REPO="https://github.com/yourusername/busboard.git"  # replace with your repo
+GITHUB_REPO="https://github.com/AJOAISD/bus-status-board.git"  # replace with your repo
 PYTHON_VERSION="python3"
 DOMAIN="your_domain_or_ip"        # change this if you have a domain
 GUNICORN_PORT=8000
